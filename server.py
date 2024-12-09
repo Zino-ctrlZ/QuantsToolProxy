@@ -14,6 +14,7 @@ def handle_request():
     params = data.get('params', {})  # Additional query parameters
     headers = data.get('headers', {})  # Additional headers
 
+    
     try:
         # Make the HTTP request using the given method, url, and additional parameters
         response = requests.request(
@@ -22,12 +23,13 @@ def handle_request():
             params=params,
             headers=headers,
             **config
-        )
+        )        
         # Format and return the response
         return jsonify({
-            'status': response.status_code,
+            'status_code': response.status_code,
             'headers': dict(response.headers),
-            'data': response.json() if response.headers.get('Content-Type') == 'application/json' else response.text
+            'data': response.json(),
+            'text': response.text
         })
     except requests.exceptions.RequestException as e:
         return jsonify({'error': str(e)}), 500
