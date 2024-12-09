@@ -23,13 +23,19 @@ def handle_request():
             params=params,
             headers=headers,
             **config
-        )        
-        # Format and return the response
+        )
+        # Return the entire response content
         return jsonify({
             'status_code': response.status_code,
             'headers': dict(response.headers),
-            'data': response.json(),
-            'text': response.text
+            'content': response.content.decode(response.encoding if response.encoding else 'utf-8'),
+            'data': response.json() if response.headers.get('Content-Type') == 'application/json' else response.text,
+            'text': response.text,
+            'url': response.url,
+            'reason': response.reason,
+            'elapsed': response.elapsed.total_seconds(),
+            'cookies': response.cookies.get_dict(),
+            'history': [r.url for r in response.history],
         })
     except requests.exceptions.RequestException as e:
         return jsonify({'error': str(e)}), 500
